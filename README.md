@@ -11,6 +11,7 @@ A responsive and accessible Memory (Concentration) card game built with HTML, CS
 - Local storage for best scores
 - Keyboard controls for accessibility
 - Responsive design for all devices
+- **Dark/Light theme toggle**
 - No external dependencies
 
 ## How to Play
@@ -28,6 +29,13 @@ A responsive and accessible Memory (Concentration) card game built with HTML, CS
 - Fully responsive design using CSS Grid
 - Accessible with ARIA attributes and keyboard controls
 - Local storage for persistent high scores
+- Dark/Light theme with system preference detection
+
+## Theme Toggle
+
+- Click the moon/sun icon in the top-right corner to switch themes
+- Theme preference is saved automatically
+- Automatically detects your system's dark mode preference
 
 ## Development
 
