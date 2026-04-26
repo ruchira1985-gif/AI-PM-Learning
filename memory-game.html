@@ -13,6 +13,29 @@
             --card-front: #ffffff;
             --text-color: #333333;
             --success-color: #4caf50;
+            /* Dark theme colors */
+            --background-color-dark: #121212;
+            --text-color-dark: #e0e0e0;
+            --card-back-dark: #1e3a5f;
+            --card-front-dark: #2d2d2d;
+            --controls-bg-dark: #1e1e1e;
+            --modal-bg-dark: #1e1e1e;
+            --scores-bg-dark: #1e1e1e;
+            --shadow-dark: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Dark theme class */
+        body.dark-theme {
+            --background-color: var(--background-color-dark);
+            --text-color: var(--text-color-dark);
+            --card-back: var(--card-back-dark);
+            --card-front: var(--card-front-dark);
+        }
+
+        body.dark-theme .controls,
+        body.dark-theme .scores-list,
+        body.dark-theme .modal-content {
+            background: var(--controls-bg-dark);
         }
 
         * {
@@ -29,6 +52,7 @@
             line-height: 1.6;
             padding: 20px;
             min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* Main container with max-width for larger screens */
@@ -54,11 +78,12 @@
             justify-content: space-around;
             flex-wrap: wrap;
             gap: 1rem;
-            background: white;
+            background: var(--card-front);
             padding: 1rem;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .stat {
@@ -173,12 +198,13 @@
         }
 
         .modal-content {
-            background: white;
+            background: var(--card-front);
             padding: 2rem;
             border-radius: 8px;
             text-align: center;
             max-width: 400px;
             width: 90%;
+            transition: background-color 0.3s ease;
         }
 
         /* Best scores section */
@@ -190,9 +216,37 @@
         .scores-list {
             max-width: 600px;
             margin: 1rem auto;
-            background: white;
+            background: var(--card-front);
             padding: 1rem;
             border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Theme toggle button */
+        .theme-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-toggle:focus {
+            outline: 3px solid var(--primary-color);
+            outline-offset: 2px;
         }
 
         /* Responsive design adjustments */
@@ -215,9 +269,10 @@
 <body>
     <div class="container">
         <!-- Game header with title and instructions -->
-        <header class="header">
+        <header class="header" style="position: relative;">
             <h1>Memory Game</h1>
             <p>Match all the pairs to win! Use keyboard or mouse to play.</p>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
         </header>
 
         <!-- Game statistics panel -->
@@ -286,8 +341,46 @@
             modal: document.querySelector('.modal'),
             finalStats: document.querySelector('.final-stats'),
             gridButtons: document.querySelectorAll('.grid-btn'),
-            scoresList: document.querySelector('.scores-list')
+            scoresList: document.querySelector('.scores-list'),
+            themeToggle: document.getElementById('themeToggle')
         };
+
+        // Theme management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('memoryGameTheme');
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            } else {
+                // Check system preference
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                applyTheme(prefersDark ? 'dark' : 'light');
+            }
+        }
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+                elements.themeToggle.textContent = '☀️';
+                elements.themeToggle.setAttribute('aria-label', 'Switch to light mode');
+            } else {
+                document.body.classList.remove('dark-theme');
+                elements.themeToggle.textContent = '🌙';
+                elements.themeToggle.setAttribute('aria-label', 'Switch to dark mode');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark-theme');
+            const newTheme = isDark ? 'light' : 'dark';
+            applyTheme(newTheme);
+            localStorage.setItem('memoryGameTheme', newTheme);
+        }
+
+        // Initialize theme on page load
+        initTheme();
+
+        // Theme toggle event listener
+        elements.themeToggle.addEventListener('click', toggleTheme);
 
         // Card symbols (emojis) for both grid sizes
         const symbols = {
